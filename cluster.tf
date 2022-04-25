@@ -29,7 +29,7 @@ resource "civo_kubernetes_cluster" "tf-cluster" {
     num_target_nodes = 2
     firewall_id = civo_firewall.my-firewall.id
     pools {
-        size = element(data.civo_size.xsmall.sizes, 0).name
+        size = element(data.civo_instances_size.xsmall.sizes, 0).name
         node_count = 1
     }
     kubernetes_version = element(data.civo_kubernetes_version.stable.versions, 0).version
@@ -83,10 +83,10 @@ resource "civo_dns_domain_name" "main" {
 }
 resource "civo_dns_domain_record" "k8s" {
     domain_id = civo_dns_domain_name.main.id
-    type = "cname"
+    type = "CNAME"
     name = "@"
     value = civo_kubernetes_cluster.tf-cluster.dns_entry
-    ttl = 30
+    ttl = 600
     depends_on = [civo_dns_domain_name.main, civo_kubernetes_cluster.tf-cluster]    
 }
 resource "helm_release" "grafana" {
